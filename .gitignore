@@ -1,0 +1,96 @@
+# ==============================================================================
+# PASTA PRIVADA LOCAL (Rascunhos, anotações e testes antes do commit oficial)
+# ==============================================================================
+sandbox_local/
+
+# ==============================================================================
+# PYTHON (Cache, ambientes virtuais e pacotes compilados)
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Ambientes Virtuais
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ==============================================================================
+# JUPYTER NOTEBOOK (.ipynb)
+# ==============================================================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ==============================================================================
+# LATEX (Arquivos auxiliares gerados na compilação do artigo SBC)
+# Nota: O .tex e o .pdf final NÃO são ignorados para que subam no repositório
+# ==============================================================================
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+
+# ==============================================================================
+# IDEs E EDITORES DE CÓDIGO (VS Code, PyCharm, Sublime, Vim)
+# ==============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ==============================================================================
+# SISTEMAS OPERACIONAIS (Windows, macOS e Linux)
+# ==============================================================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+.Trash-*
