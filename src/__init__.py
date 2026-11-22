@@ -4,6 +4,6 @@
 # ------------------------------------------------------------------------------
 """
 Pacote src do Detector de Impasses (Deadlocks) com Grafo de Alocação de Recursos (RAG) via DFS.
-Universidade Federal do Pará (UFPA) - Campus Universitário de Tucuruí - FAEC.
+Universidade Federal do Pará (UFPA) - Campus Universitário de Tucuruí - FECOMP.
 Disciplina: Sistemas Operacionais - Prof. Dr. Iago Medeiros.
 """
