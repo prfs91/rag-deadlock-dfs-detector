@@ -1,5 +1,3 @@
-# Caso de Teste Obrigatório T3 (Grafo 2 da Aula - Espera Circular Clássica)
-# R está com A, S está com B, T está com C; A solicita S, B solicita T, C solicita R
 PROCESSOS A B C
 RECURSOS R S T
 ARESTAS

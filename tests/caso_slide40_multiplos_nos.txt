@@ -1,16 +1,14 @@
-# Caso de Teste Obrigatório T1 (Slide 40 - Aula de Impasses - Prof. Dr. Iago Medeiros)
-# Convenção: Recurso -> Processo (Posse) | Processo -> Recurso (Solicitação)
 PROCESSOS A B C D E F G
 RECURSOS R S T U V W
 ARESTAS
 R A
 A S
 C S
+D S
 F S
 W F
-D S
-D T
 B T
+D T
 T E
 E V
 V G
