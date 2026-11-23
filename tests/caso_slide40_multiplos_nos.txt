@@ -1,5 +1,9 @@
-# Caso de Teste Obrigatório T1 (Slide 40 - Aula de Impasses - Prof. Dr. Iago Medeiros)
-# Convenção: Recurso -> Processo (Posse) | Processo -> Recurso (Solicitação)
+# ==============================================================================
+# Caso de Teste T1: Grafo do Slide 40 (múltiplos nós)
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Há deadlock (D -> T -> E -> V -> G -> U -> D)
+# ==============================================================================
 PROCESSOS A B C D E F G
 RECURSOS R S T U V W
 ARESTAS
