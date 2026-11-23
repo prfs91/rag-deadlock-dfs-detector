@@ -1,10 +1,18 @@
-# Caso de Teste Obrigatório T2 (Grafo 1 da Aula - Execução Série/Segura sem Ciclo)
-# Processos A, B e C utilizam R, S e T sem formar espera circular fechada
-PROCESSOS A B C
-RECURSOS R S T
+# ==============================================================================
+# Caso de Teste T2: Grafo 1 do enunciado do Trabalho 2
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Há deadlock (D -> T -> E -> V -> Z -> U -> D)
+# ==============================================================================
+PROCESSOS B D E Z F
+RECURSOS T U V W S
 ARESTAS
-R A
-A S
-S B
+D T
+T E
+E V
+V Z
+Z U
+U D
 B T
-T C
+W F
+S B
