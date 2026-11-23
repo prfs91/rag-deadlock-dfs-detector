@@ -1,15 +1,16 @@
 # ==============================================================================
 # Caso de Teste T6: Cadeia longa de espera sem deadlock
-# Responsável por este passo: Nauan Christo de Aquino
-# Formato: Opção A (PROCESSOS, RECURSOS, ARESTAS — um par por linha)
-# Resultado esperado: Sem deadlock (cadeia A -> R1 -> B -> R2 -> C -> R3 -> D)
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Sem deadlock (cadeia termina em P4 com R4 sem novas solicitações)
 # ==============================================================================
-PROCESSOS A B C D
-RECURSOS R1 R2 R3
+PROCESSOS P1 P2 P3 P4
+RECURSOS R1 R2 R3 R4
 ARESTAS
-A R1
-R1 B
-B R2
-R2 C
-C R3
-R3 D
+R1 P1
+P1 R2
+R2 P2
+P2 R3
+R3 P3
+P3 R4
+R4 P4
