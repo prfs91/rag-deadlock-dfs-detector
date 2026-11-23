@@ -1,0 +1,9 @@
+# ==============================================================================
+# ARQUIVO: requirements.txt
+# RESPONSÁVEL: Pamella Roberta Ferreira da Silva
+# DESCRIÇÃO: Dependências necessárias para execução do detector de deadlock,
+#            renderização gráfica (Matplotlib) e Jupyter Notebook.
+# ==============================================================================
+matplotlib>=3.7.0
+ipython>=8.0.0
+jupyter>=1.0.0
