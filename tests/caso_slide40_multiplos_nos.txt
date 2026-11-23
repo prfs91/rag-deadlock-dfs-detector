@@ -1,14 +1,20 @@
+# ==============================================================================
+# Caso de Teste T1: Grafo do Slide 40 (múltiplos nós)
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Há deadlock (D -> T -> E -> V -> G -> U -> D)
+# ==============================================================================
 PROCESSOS A B C D E F G
 RECURSOS R S T U V W
 ARESTAS
 R A
 A S
 C S
-D S
 F S
 W F
-B T
+D S
 D T
+B T
 T E
 E V
 V G

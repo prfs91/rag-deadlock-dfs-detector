@@ -1,9 +1,22 @@
-PROCESSOS A B C
-RECURSOS R S T
+# ==============================================================================
+# Caso de Teste T3: Grafo 2 do enunciado do Trabalho 2
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Sem deadlock
+# ==============================================================================
+PROCESSOS A B C D E F G Z
+RECURSOS R S T U V W
 ARESTAS
 R A
-S B
-T C
+W F
+S D
+U D
+T E
+V E
 A S
+C S
+F S
+G U
+D T
 B T
-C R
+Z V

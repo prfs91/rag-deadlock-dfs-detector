@@ -1,3 +1,9 @@
+# ==============================================================================
+# Caso de Teste T4: Dois ciclos disjuntos simultâneos (Slides 30(c) e 36)
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Há deadlock (dois ciclos independentes; buscar_todos=True)
+# ==============================================================================
 PROCESSOS A B C D
 RECURSOS R S T U
 ARESTAS

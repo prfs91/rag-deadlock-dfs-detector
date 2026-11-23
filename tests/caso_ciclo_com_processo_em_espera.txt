@@ -1,0 +1,16 @@
+# ==============================================================================
+# Caso de Teste T5: Ciclo com processo esperando de fora
+# Responsável: Nauan Christo de Aquino
+# Formato: Opção 1 (Lista de arestas — PROCESSOS, RECURSOS, ARESTAS)
+# Resultado esperado: Há deadlock no ciclo (A -> S -> B -> T -> C -> R -> A); D espera de fora sem fazer parte do ciclo
+# ==============================================================================
+PROCESSOS A B C D
+RECURSOS R S T
+ARESTAS
+R A
+A S
+S B
+B T
+T C
+C R
+D R
