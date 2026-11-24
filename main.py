@@ -54,3 +54,33 @@ def main() -> None:
         help="Na bateria completa, executa apenas os casos obrigatórios T1, T2 e T3."
     )
     args = parser.parse_args()
+
+# ------------------------------------------------------------------------------
+# [PASSO 4.6 | FASE 4 | branch: fase-4/integracao | commit e push: Pamella Roberta]
+# Modo de arquivo único (--arquivo) e bateria completa dos casos de teste.
+# ------------------------------------------------------------------------------
+    if args.arquivo:
+        if not os.path.exists(args.arquivo):
+            print(f"[ERRO] Arquivo não encontrado: {args.arquivo}")
+            sys.exit(1)
+        nome_base = os.path.splitext(os.path.basename(args.arquivo))[0]
+        proc, rec, adj, arestas = carregar_e_validar_grafo(args.arquivo)
+        ciclos, logs = detectar_impasses_dfs(proc, rec, adj, buscar_todos=args.todos)
+        veredito = formatar_resultado(ciclos)
+        if args.rastreamento:
+            for linha in logs:
+                print(linha)
+            print()
+        figuras = gerar_figuras_do_caso(
+            sigla="CASO", titulo=nome_base, processos=proc, recursos=rec,
+            arestas=arestas, ciclos=ciclos, veredito=veredito
+        )
+        print(veredito)
+        print("[Figuras exportadas em:]")
+        for caminho in figuras.values():
+            print(f"  - {caminho}")
+    else:
+        executar_bateria_completa_cli(somente_obrigatorios=args.obrigatorios)
+
+if __name__ == "__main__":
+    main()
