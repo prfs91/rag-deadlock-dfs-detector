@@ -17,3 +17,27 @@ def carregar_e_validar_grafo(
     lendo_arestas = False
 
     with open(caminho_arquivo, "r", encoding="utf-8") as f:
+
+
+
+
+
+        for num_linha, linha_bruta in enumerate(f, 1):
+                    linha = linha_bruta.split("#")[0].strip()
+                    if not linha:
+                        continue
+                    partes = linha.split()
+                    cabecalho = partes[0].upper()
+        
+                    if cabecalho == "PROCESSOS":
+                        processos.extend(partes[1:])
+                        lendo_arestas = False
+                    elif cabecalho == "RECURSOS":
+                        recursos.extend(partes[1:])
+                        lendo_arestas = False
+                    elif cabecalho == "ARESTAS":
+                        lendo_arestas = True
+                    elif lendo_arestas and len(partes) == 2:
+                        arestas.append((partes[0], partes[1]))
+                    else:
+                        raise ValueError(f"Erro sintático na linha {num_linha}: '{linha}'")
