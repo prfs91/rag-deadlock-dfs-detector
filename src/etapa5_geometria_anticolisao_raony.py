@@ -298,3 +298,58 @@ def _arco_circular(centro, raio, ang_ini, ang_fim, passos=40):
     return [(centro[0] + raio * math.cos(ang_ini + (ang_fim - ang_ini) * i / passos),
              centro[1] + raio * math.sin(ang_ini + (ang_fim - ang_ini) * i / passos))
             for i in range(passos + 1)]
+
+
+
+def calcular_layout_e_rotas(
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]]
+) -> Tuple[Dict[str, Tuple[float, float]], Dict[Tuple[str, str], List[Tuple[float, float]]]]:
+    """
+    [INÍCIO DA FUNÇÃO - Autor: Raony Olivio Dias Capela]
+    Ponto de entrada do motor geométrico. Devolve:
+      - pos[no]   = (x, y) do centro de cada processo/recurso;
+      - rotas[(u, v)] = lista de pontos (centro de u ... centro de v) por onde a
+        seta u -> v deve passar, livre de colisões com nós e outras arestas.
+    A seta sempre aponta para v: P -> R = solicitação; R -> P = posse (Aula 07).
+    """
+    nos = list(processos) + list(recursos)
+    ciclos = _componentes_sao_ciclos_disjuntos(nos, arestas)
+    if ciclos:
+        # Círculo Trigonométrico Autoajustável (um círculo por ciclo, Slide 30(c)/38)
+        pos, rotas, centro_x = {}, {}, 0.0
+        for ciclo in ciclos:
+            k = len(ciclo)
+            raio = max(1.45, k * 0.36)
+            angulos = {}
+            for i, no in enumerate(ciclo):
+                ang = (math.pi / 2.0) - (2.0 * math.pi * i / k)
+                angulos[no] = ang
+                pos[no] = (centro_x + raio * math.cos(ang), raio * math.sin(ang))
+            for i, no in enumerate(ciclo):
+                prox = ciclo[(i + 1) % k]
+                rotas[(no, prox)] = _arco_circular((centro_x, 0.0), raio, angulos[no], angulos[prox])
+            centro_x += 2.0 * raio + 2.2
+        return pos, rotas
+
+    if not arestas:
+        cel = {n: (i, 0) for i, n in enumerate(nos)}
+    else:
+        grau = {n: sum(n in e for e in arestas) for n in nos}
+        raizes = sorted(nos, key=lambda n: (-grau[n], nos.index(n)))[:5]
+        melhor = None
+        for raiz in raizes:
+            cel = _construcao_gulosa(nos, arestas, raiz)
+            c, _ = _custo_disposicao(cel, arestas)
+            if melhor is None or c < melhor[0]:
+                melhor = (c, cel)
+        cel = _recozimento_simulado(dict(melhor[1]), arestas)
+        cel = _descida_exaustiva(cel, arestas)
+    _, rotas_grade = _custo_disposicao(cel, arestas)
+    min_x = min(p[0] for p in cel.values())
+    min_y = min(p[1] for p in cel.values())
+    conv = lambda p: ((p[0] - min_x) * ESPACAMENTO_GRADE, -(p[1] - min_y) * ESPACAMENTO_GRADE)
+    pos = {n: conv(p) for n, p in cel.items()}
+    rotas = {e: [conv(p) for p in pts] for e, pts in rotas_grade.items()}
+    return pos, rotas
