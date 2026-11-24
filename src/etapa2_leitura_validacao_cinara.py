@@ -41,3 +41,14 @@ def carregar_e_validar_grafo(
                         arestas.append((partes[0], partes[1]))
                     else:
                         raise ValueError(f"Erro sintático na linha {num_linha}: '{linha}'")
+
+
+    conj_proc = set(processos)
+    conj_rec = set(recursos)
+    if conj_proc.intersection(conj_rec):
+        raise ValueError(
+            "Erro semântico: Há vértices declarados simultaneamente como Processo e Recurso."
+        )
+    
+    recursos_em_posse: Dict[str, str] = {}
+    adjacencia: Dict[str, List[str]] = {no: [] for no in processos + recursos}
