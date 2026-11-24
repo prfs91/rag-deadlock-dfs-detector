@@ -76,3 +76,34 @@ def _conflito_entre_segmentos(s, t, pontos_compartilhados) -> float:
         if o == 0 and _ponto_no_retangulo(q1, q2, p):
             return 0.0 if p in pontos_compartilhados else PENALIDADE_PROIBIDA
     return 0.0
+
+
+
+def _rotas_candidatas(a, b, incluir_desvios: bool):
+    """Lista (pontos_da_rota, custo_extra) das rotas ortogonais possíveis de a até b."""
+    (x1, y1), (x2, y2) = a, b
+    rotas = []
+    if not incluir_desvios:
+        if x1 == x2 or y1 == y2:
+            rotas.append(([a, b], 0.0))
+        else:
+            rotas.append(([a, (x2, y1), b], 3.0))   # "L": horizontal e depois vertical
+            rotas.append(([a, (x1, y2), b], 3.0))   # "L": vertical e depois horizontal
+            rotas.append(([a, b], 9.0))             # diagonal (último recurso)
+        return rotas
+    faixas_h = {y1 - 1, y1 + 1, y2 - 1, y2 + 1, y1 - .5, y1 + .5, y2 - .5, y2 + .5,
+                min(y1, y2) - 1.5, max(y1, y2) + 1.5}
+    for h in sorted(faixas_h):
+        if h not in (y1, y2):
+            rotas.append(([a, (x1, h), (x2, h), b], 12.0))
+    faixas_v = {x1 - 1, x1 + 1, x2 - 1, x2 + 1, x1 - .5, x1 + .5, x2 - .5, x2 + .5,
+                min(x1, x2) - 1.5, max(x1, x2) + 1.5}
+    for v in sorted(faixas_v):
+        if v not in (x1, x2):
+            rotas.append(([a, (v, y1), (v, y2), b], 12.0))
+    return rotas
+
+def _direcao_unitaria(p, q):
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    n = math.hypot(dx, dy)
+    return (round(dx / n, 3), round(dy / n, 3))
