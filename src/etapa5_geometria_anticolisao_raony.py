@@ -170,3 +170,41 @@ def rotear_arestas_na_grade(
         rotas[(u, v)] = pts
         total += custo
     return total, rotas
+
+
+
+def _custo_disposicao(cel, arestas):
+    total, rotas = rotear_arestas_na_grade(cel, arestas)
+    xs = [p[0] for p in cel.values()]
+    ys = [p[1] for p in cel.values()]
+    largura, altura = max(xs) - min(xs) + 1, max(ys) - min(ys) + 1
+    total += PESO_AREA * largura * altura + PESO_LADO * max(largura, altura) ** 2
+    return total, rotas
+
+def _construcao_gulosa(nos, arestas, raiz):
+    vizinhos = {n: set() for n in nos}
+    for u, v in arestas:
+        vizinhos[u].add(v)
+        vizinhos[v].add(u)
+    cel = {raiz: (0, 0)}
+    while len(cel) < len(nos):
+        colocados = set(cel)
+        candidatos = [n for n in nos if n not in cel and vizinhos[n] & colocados]
+        if not candidatos:   # novo componente desconexo: começa à direita
+            candidatos = [n for n in nos if n not in cel]
+        candidatos.sort(key=lambda n: (-len(vizinhos[n] & colocados), nos.index(n)))
+        n = candidatos[0]
+        ocupadas = set(cel.values())
+        ancoras = [cel[m] for m in vizinhos[n] if m in cel] or \
+                  [(max(p[0] for p in ocupadas) + 2, 0)]
+        opcoes = {(ax + dx, ay + dy) for (ax, ay) in ancoras
+                  for dx in range(-2, 3) for dy in range(-2, 3)} - ocupadas
+        sub = [e for e in arestas if (e[0] in cel or e[0] == n) and (e[1] in cel or e[1] == n)]
+        melhor = None
+        for op in sorted(opcoes):
+            cel[n] = op
+            c, _ = _custo_disposicao(cel, sub)
+            if melhor is None or c < melhor[0]:
+                melhor = (c, op)
+        cel[n] = melhor[1]
+    return cel
