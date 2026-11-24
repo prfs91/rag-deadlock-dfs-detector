@@ -20,3 +20,22 @@ def detectar_impasses_dfs(
     log_passos: List[str] = []
     todos_nos = processos + recursos
     ordem_nos = {no: i for i, no in enumerate(todos_nos)}
+
+
+
+def percorrer_ramo_dfs_recursivo(
+        no_atual: str,
+        lista_L: List[str],
+        arcos_marcados: Set[Tuple[str, str]]
+    ) -> Optional[List[str]]:
+        if no_atual in lista_L:
+            ciclo_limpo = isolar_ciclo_elementar(lista_L, no_atual, ordem_nos)
+            log_passos.append(
+                f"  [CICLO DETECTADO!] Nó '{no_atual}' repetido em L={lista_L + [no_atual]} "
+                f"-> Ciclo extraído: {' -> '.join(ciclo_limpo)}"
+            )
+            assinatura = normalizar_ciclo(ciclo_limpo)
+            if assinatura not in assinaturas:
+                assinaturas.add(assinatura)
+                ciclos.append(ciclo_limpo)
+            return ciclo_limpo
