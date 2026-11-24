@@ -180,3 +180,40 @@ def _salvar(fig, nome_png: str) -> str:
     plt.savefig(caminho, bbox_inches="tight", dpi=DPI_FIGURAS, facecolor="white")
     plt.close(fig)
     return caminho
+
+# ------------------------------------------------------------------------------
+# [PASSO 3.P3 | FASE 3 | branch: fase-3/pamella-desenho | commit e push: Pamella Roberta]
+# salvar_grafo_alocacao: imagem do grafo de alocação de recursos (entrada).
+# ------------------------------------------------------------------------------
+
+def salvar_grafo_alocacao(
+    titulo: str,
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]],
+    pos: Dict[str, Tuple[float, float]],
+    rotas: Dict[Tuple[str, str], List[Tuple[float, float]]],
+    nome_png: str
+) -> str:
+    """
+    [INÍCIO DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+    Gera a imagem do Grafo de Alocação de Recursos tal como foi lido do arquivo:
+    processos em círculos azuis, recursos em quadrados ciano e todas as setas em
+    grafite. As posições e rotas vêm da Etapa 5. Salva o PNG em 'output/figures/'.
+    """
+    conj_p = set(processos)
+    fig, ax = _criar_tela(pos, rotas)
+    _desenhar_nos(ax, pos, processos, recursos,
+                  [COR_PROCESSO_CIRCULO] * len(processos),
+                  [COR_RECURSO_QUADRADO] * len(recursos),
+                  COR_BORDA_PROCESSO, COR_BORDA_RECURSO, "#17202a")
+    for (u, v) in arestas:
+        desenhar_aresta_estilizada(ax, rotas[(u, v)], u in conj_p, v in conj_p,
+                                   COR_ARESTA_NORMAL, 2.1, "solid", 21)
+    ax.set_title(
+        f"Grafo de Alocação de Recursos — {titulo}\n"
+        f"● Círculos: Processos ({len(processos)})   |   ■ Quadrados: Recursos ({len(recursos)})",
+        fontsize=11.5, fontweight="bold", pad=14
+    )
+    return _salvar(fig, nome_png)
+    # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
