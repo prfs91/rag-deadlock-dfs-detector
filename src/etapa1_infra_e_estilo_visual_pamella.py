@@ -217,3 +217,56 @@ def salvar_grafo_alocacao(
     )
     return _salvar(fig, nome_png)
     # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+# ------------------------------------------------------------------------------
+# [PASSO 3.P4 | FASE 3 | branch: fase-3/pamella-desenho | commit e push: Pamella Roberta]
+# salvar_grafo_deteccao_dfs: imagem do resultado da busca em profundidade.
+# ------------------------------------------------------------------------------
+
+def salvar_grafo_deteccao_dfs(
+    titulo: str,
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]],
+    ciclos: List[List[str]],
+    texto_veredito: str,
+    pos: Dict[str, Tuple[float, float]],
+    rotas: Dict[Tuple[str, str], List[Tuple[float, float]]],
+    nome_png: str
+) -> str:
+    """
+    [INÍCIO DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+    Gera a imagem do resultado da Busca em Profundidade sobre o MESMO desenho do
+    grafo de alocação: em vermelho sólido o que pertence ao ciclo de impasse e em
+    verde com traço cinza o que a busca percorreu e liberou. Salva em 'output/figures/'.
+    """
+    conj_p = set(processos)
+    nos_ciclo: Set[str] = set()
+    arestas_ciclo: Set[Tuple[str, str]] = set()
+    for ciclo in ciclos:
+        nos_ciclo.update(ciclo)
+        for i in range(len(ciclo) - 1):
+            arestas_ciclo.add((ciclo[i], ciclo[i + 1]))
+
+    fig, ax = _criar_tela(pos, rotas)
+    _desenhar_nos(ax, pos, processos, recursos,
+                  [COR_NO_DEADLOCK if p in nos_ciclo else COR_NO_SEGURO for p in processos],
+                  [COR_NO_DEADLOCK if r in nos_ciclo else COR_NO_SEGURO for r in recursos],
+                  "#17202a", "#17202a", "white")
+    for (u, v) in arestas:
+        em_ciclo = (u, v) in arestas_ciclo
+        desenhar_aresta_estilizada(
+            ax, rotas[(u, v)], u in conj_p, v in conj_p,
+            COR_ARESTA_CICLO if em_ciclo else COR_ARESTA_SEGURA,
+            3.2 if em_ciclo else 1.6,
+            "solid" if em_ciclo else (0, (4, 3)),
+            24 if em_ciclo else 19
+        )
+    ax.set_title(
+        f"Detecção por Busca em Profundidade (DFS) — {titulo}\n"
+        f"{texto_veredito.replace(chr(10), ' | ')}",
+        fontsize=11.5, fontweight="bold",
+        color=COR_ARESTA_CICLO if ciclos else "#1e8449", pad=14
+    )
+    return _salvar(fig, nome_png)
+    # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
