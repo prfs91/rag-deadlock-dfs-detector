@@ -268,3 +268,33 @@ def _descida_exaustiva(cel, arestas, max_passadas=6):
         if not melhorou:
             break
     return cel
+
+
+
+def _componentes_sao_ciclos_disjuntos(nos, arestas) -> Optional[List[List[str]]]:
+    """Se o grafo for apenas 2+ ciclos simples disjuntos (Slide 30(c)/38), devolve-os."""
+    saida = {n: [] for n in nos}
+    entrada = {n: 0 for n in nos}
+    for u, v in arestas:
+        saida[u].append(v)
+        entrada[v] += 1
+    if any(len(saida[n]) != 1 or entrada[n] != 1 for n in nos):
+        return None
+    vistos, ciclos = set(), []
+    for n in nos:
+        if n in vistos:
+            continue
+        ciclo, atual = [], n
+        while atual not in vistos:
+            vistos.add(atual)
+            ciclo.append(atual)
+            atual = saida[atual][0]
+        ciclos.append(ciclo)
+    return ciclos if len(ciclos) >= 2 else None
+
+def _arco_circular(centro, raio, ang_ini, ang_fim, passos=40):
+    if ang_fim > ang_ini:          # sentido horário: o ângulo sempre diminui
+        ang_fim -= 2 * math.pi
+    return [(centro[0] + raio * math.cos(ang_ini + (ang_fim - ang_ini) * i / passos),
+             centro[1] + raio * math.sin(ang_ini + (ang_fim - ang_ini) * i / passos))
+            for i in range(passos + 1)]
