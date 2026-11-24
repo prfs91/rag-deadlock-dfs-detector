@@ -353,3 +353,37 @@ def calcular_layout_e_rotas(
     pos = {n: conv(p) for n, p in cel.items()}
     rotas = {e: [conv(p) for p in pts] for e, pts in rotas_grade.items()}
     return pos, rotas
+
+
+
+def contar_colisoes_desenho(
+    pos: Dict[str, Tuple[float, float]],
+    rotas: Dict[Tuple[str, str], List[Tuple[float, float]]],
+    raio_no: float = 0.40
+) -> Dict[str, int]:
+    """
+    [INÍCIO DA FUNÇÃO - Autor: Raony Olivio Dias Capela]
+    Auditoria final (independente do otimizador): conta arestas que passam por
+    nós alheios e pares de arestas que se cruzam/sobrepõem fora de nós comuns.
+    """
+    nos_atravessados, cruzamentos = 0, 0
+    itens = list(rotas.items())
+    for (u, v), pts in itens:
+        segs = list(zip(pts[:-1], pts[1:]))
+        for w, pw in pos.items():
+            if w in (u, v):
+                continue
+            if any(distancia_ponto_segmento(pw[0], pw[1], p[0], p[1], q[0], q[1]) < raio_no
+                   for p, q in segs):
+                nos_atravessados += 1
+    for i in range(len(itens)):
+        (u1, v1), p1 = itens[i]
+        for j in range(i + 1, len(itens)):
+            (u2, v2), p2 = itens[j]
+            comuns = {pos[n] for n in {u1, v1} & {u2, v2}}
+            # descarta o trecho colado ao nó comum (onde as setas legitimamente se encontram)
+            if any(_conflito_entre_segmentos(s, t, comuns) > 0
+                   for s in zip(p1[:-1], p1[1:]) for t in zip(p2[:-1], p2[1:])
+                   if _caixas_se_tocam(s, t)):
+                cruzamentos += 1
+    return {"arestas_sobre_nos": nos_atravessados, "pares_de_arestas_em_conflito": cruzamentos}
