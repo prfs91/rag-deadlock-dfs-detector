@@ -107,3 +107,66 @@ def _direcao_unitaria(p, q):
     dx, dy = q[0] - p[0], q[1] - p[1]
     n = math.hypot(dx, dy)
     return (round(dx / n, 3), round(dy / n, 3))
+
+
+
+def _avaliar_rota(pontos, extra, u, v, cel, segmentos_fixos, portas_usadas):
+    segs = list(zip(pontos[:-1], pontos[1:]))
+    custo = extra + sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in segs)
+    # (1) a rota não pode passar por cima de nenhum nó (exceto sair/chegar nos seus)
+    lim = RAIO_EXCLUSAO_NO
+    for i, (p, q) in enumerate(segs):
+        x0, x1 = sorted((p[0], q[0]))
+        y0, y1 = sorted((p[1], q[1]))
+        for w, pw in cel.items():
+            if pw[0] < x0 - lim or pw[0] > x1 + lim or pw[1] < y0 - lim or pw[1] > y1 + lim:
+                continue
+            if (w == u and i == 0) or (w == v and i == len(segs) - 1):
+                continue
+            if distancia_ponto_segmento(pw[0], pw[1], p[0], p[1], q[0], q[1]) < lim:
+                custo += PENALIDADE_PROIBIDA
+    # (2)/(3) conflitos com arestas já roteadas
+    for (x, y), segs_outra in segmentos_fixos.items():
+        comuns = {cel[n] for n in (x, y) if n in (u, v)}
+        for s in segs:
+            for t in segs_outra:
+                if _caixas_se_tocam(s, t):
+                    custo += _conflito_entre_segmentos(s, t, comuns)
+    # (2) duas setas não podem usar o mesmo lado (porta) de um nó
+    d_saida = _direcao_unitaria(pontos[0], pontos[1])
+    d_chegada = _direcao_unitaria(pontos[-1], pontos[-2])
+    if (u, d_saida) in portas_usadas:
+        custo += PENALIDADE_PROIBIDA
+    if (v, d_chegada) in portas_usadas:
+        custo += PENALIDADE_PROIBIDA
+    return custo, segs, d_saida, d_chegada
+
+def rotear_arestas_na_grade(
+    cel: Dict[str, Tuple[float, float]],
+    arestas: List[Tuple[str, str]]
+) -> Tuple[float, Dict[Tuple[str, str], List[Tuple[float, float]]]]:
+    """
+    [INÍCIO DA FUNÇÃO - Autor: Raony Olivio Dias Capela]
+    Roteia todas as arestas (mais curtas primeiro) escolhendo, para cada uma, a rota
+    ortogonal de menor custo dado o que já foi desenhado. Retorna (custo, rotas).
+    """
+    ordem = sorted(arestas, key=lambda e: (abs(cel[e[0]][0] - cel[e[1]][0]) +
+                                           abs(cel[e[0]][1] - cel[e[1]][1]), e))
+    segmentos_fixos, portas, rotas, total = {}, set(), {}, 0.0
+    for (u, v) in ordem:
+        a, b = cel[u], cel[v]
+        melhor = None
+        for desvios in (False, True):
+            if desvios and melhor[0] < PENALIDADE_CRUZAMENTO:
+                break
+            for pts, extra in _rotas_candidatas(a, b, desvios):
+                r = _avaliar_rota(pts, extra, u, v, cel, segmentos_fixos, portas)
+                if melhor is None or r[0] < melhor[0]:
+                    melhor = (r[0], pts, r[1], r[2], r[3])
+        custo, pts, segs, d_saida, d_chegada = melhor
+        segmentos_fixos[(u, v)] = segs
+        portas.add((u, d_saida))
+        portas.add((v, d_chegada))
+        rotas[(u, v)] = pts
+        total += custo
+    return total, rotas
