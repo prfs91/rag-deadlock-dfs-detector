@@ -23,7 +23,9 @@ def detectar_impasses_dfs(
 
 
 
-def percorrer_ramo_dfs_recursivo(
+
+
+    def percorrer_ramo_dfs_recursivo(
         no_atual: str,
         lista_L: List[str],
         arcos_marcados: Set[Tuple[str, str]]
@@ -42,7 +44,9 @@ def percorrer_ramo_dfs_recursivo(
 
 
 
-lista_L.append(no_atual)
+
+
+        lista_L.append(no_atual)
         log_passos.append(f"  [Avanço] Visitando '{no_atual}' | Lista L: {lista_L}")
 
         for vizinho in adjacencia.get(no_atual, []):
@@ -53,3 +57,17 @@ lista_L.append(no_atual)
                 achado = percorrer_ramo_dfs_recursivo(vizinho, lista_L, arcos_marcados)
                 if achado is not None and not buscar_todos:
                     return achado
+
+
+
+        lista_L.pop()
+        log_passos.append(f"  [Retrocesso] Beco sem saída em '{no_atual}' | Lista L: {lista_L}")
+        return None
+
+    for raiz in todos_nos:
+        log_passos.append(f"--- Iniciando busca DFS com raiz em '{raiz}' ---")
+        res = percorrer_ramo_dfs_recursivo(raiz, [], set())
+        if res is not None and not buscar_todos:
+            break
+
+    return ciclos, log_passos
