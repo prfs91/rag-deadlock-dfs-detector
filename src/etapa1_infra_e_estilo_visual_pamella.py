@@ -134,3 +134,49 @@ def desenhar_aresta_estilizada(
         shrinkA=0, shrinkB=0, zorder=3
     ))
     # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+    # ------------------------------------------------------------------------------
+# [PASSO 3.P2 | FASE 3 | branch: fase-3/pamella-desenho | commit e push: Pamella Roberta]
+# Desenho dos nós e preparação da tela comum aos dois grafos.
+# ------------------------------------------------------------------------------
+
+def _desenhar_nos(ax, pos, processos, recursos, cores_processos, cores_recursos,
+                  cor_borda_processo, cor_borda_recurso, cor_texto) -> None:
+    """Desenha processos como círculos e recursos como quadrados, com os nomes centralizados."""
+    for i, p in enumerate(processos):
+        ax.add_patch(Circle(pos[p], RAIO_CIRCULO_PROCESSO, facecolor=cores_processos[i],
+                            edgecolor=cor_borda_processo, linewidth=2.0, zorder=4))
+    for i, r in enumerate(recursos):
+        x, y = pos[r]
+        ax.add_patch(Rectangle((x - MEIO_LADO_QUADRADO, y - MEIO_LADO_QUADRADO),
+                               2 * MEIO_LADO_QUADRADO, 2 * MEIO_LADO_QUADRADO,
+                               facecolor=cores_recursos[i], edgecolor=cor_borda_recurso,
+                               linewidth=2.0, zorder=4))
+    for no in list(processos) + list(recursos):
+        ax.text(pos[no][0], pos[no][1], no, ha="center", va="center", fontsize=11.5,
+                fontweight="bold", color=cor_texto, zorder=5)
+
+def _criar_tela(pos, rotas):
+    """Cria a figura de um grafo, com tamanho e enquadramento ajustados ao próprio desenho."""
+    xs = [p[0] for p in pos.values()] + [p[0] for pts in rotas.values() for p in pts]
+    ys = [p[1] for p in pos.values()] + [p[1] for pts in rotas.values() for p in pts]
+    margem = 0.9
+    x_min, x_max = min(xs) - margem, max(xs) + margem
+    y_min, y_max = min(ys) - margem, max(ys) + margem
+    largura_dados, altura_dados = x_max - x_min, y_max - y_min
+    escala = min(0.95, 7.2 / largura_dados, 6.0 / altura_dados)   # polegadas por unidade
+    fig, ax = plt.subplots(figsize=(max(7.6, largura_dados * escala),
+                                    max(3.2, altura_dados * escala) + 1.1))
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+    return fig, ax
+
+def _salvar(fig, nome_png: str) -> str:
+    """Exporta a figura em DPI_FIGURAS e devolve o caminho do arquivo gravado."""
+    caminho = os.path.join(PASTA_FIGURAS, nome_png)
+    plt.tight_layout()
+    plt.savefig(caminho, bbox_inches="tight", dpi=DPI_FIGURAS, facecolor="white")
+    plt.close(fig)
+    return caminho
