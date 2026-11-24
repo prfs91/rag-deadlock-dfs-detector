@@ -50,3 +50,62 @@ from src.etapa6_testes_validacao_nauan import (
     CASOS_DE_TESTE_OFICIAIS,
     validar_gabarito_caso
 )
+
+# ------------------------------------------------------------------------------
+# [PASSO 4.2 | FASE 4 | branch: fase-4/integracao | commit e push: Pamella Roberta (coautor: Raony Olivio)]
+# Nome descritivo das imagens e geração das três figuras de um caso.
+# ------------------------------------------------------------------------------
+
+def montar_nome_figura(sigla: str, titulo: str, tipo: str) -> str:
+    """
+    [INÍCIO DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+    Monta o nome do arquivo PNG a partir da sigla do caso, do título (situação e,
+    quando houver, identificação do grafo) e do tipo da imagem. Exemplo:
+    montar_nome_figura("T1", "Grafo 1 do Enunciado com Deadlock", "cartao")
+    -> "T1_grafo_1_do_enunciado_com_deadlock_cartao.png"
+    """
+    sem_acento = unicodedata.normalize("NFKD", titulo).encode("ascii", "ignore").decode()
+    apelido = re.sub(r"[^a-z0-9]+", "_", sem_acento.lower()).strip("_")
+    return f"{sigla}_{apelido}_{tipo}.png"
+    # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+def gerar_figuras_do_caso(
+    sigla: str,
+    titulo: str,
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]],
+    ciclos: List[List[str]],
+    veredito: str
+) -> Dict[str, str]:
+    """
+    [INÍCIO DA FUNÇÃO INTEGRADA - Pamella Roberta & Raony Olivio Dias Capela]
+    Calcula uma única vez a geometria do grafo (Etapa 5 — Raony), audita o desenho
+    e gera as TRÊS imagens separadas do caso (Etapa 1 — Pamella):
+      - cartão-relatório do diagnóstico;
+      - grafo de alocação de recursos (a entrada, como foi lida);
+      - grafo da detecção por busca em profundidade (o resultado).
+    Os dois grafos usam exatamente a mesma disposição, para poderem ser comparados.
+    Devolve o caminho de cada imagem.
+    """
+    pos, rotas = calcular_layout_e_rotas(processos, recursos, arestas)
+    auditoria = contar_colisoes_desenho(pos, rotas)
+    if any(auditoria.values()):
+        print(f"[AVISO] Desenho de '{titulo}' com colisões inevitáveis: {auditoria}")
+
+    nome = lambda tipo: montar_nome_figura(sigla, titulo, tipo)
+    return {
+        "cartao": salvar_cartao_diagnostico(
+            f"{sigla} - {titulo}", processos, recursos, arestas, ciclos, veredito,
+            nome("cartao")
+        ),
+        "grafo_alocacao": salvar_grafo_alocacao(
+            f"{sigla} - {titulo}", processos, recursos, arestas, pos, rotas,
+            nome("grafo_alocacao")
+        ),
+        "grafo_deteccao_dfs": salvar_grafo_deteccao_dfs(
+            f"{sigla} - {titulo}", processos, recursos, arestas, ciclos, veredito, pos, rotas,
+            nome("grafo_deteccao_dfs")
+        ),
+    }
+    # [FIM DA FUNÇÃO INTEGRADA - Pamella Roberta & Raony Olivio Dias Capela]
