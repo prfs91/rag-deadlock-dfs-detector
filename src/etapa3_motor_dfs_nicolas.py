@@ -39,3 +39,17 @@ def percorrer_ramo_dfs_recursivo(
                 assinaturas.add(assinatura)
                 ciclos.append(ciclo_limpo)
             return ciclo_limpo
+
+
+
+lista_L.append(no_atual)
+        log_passos.append(f"  [Avanço] Visitando '{no_atual}' | Lista L: {lista_L}")
+
+        for vizinho in adjacencia.get(no_atual, []):
+            arco = (no_atual, vizinho)
+            if arco not in arcos_marcados:
+                arcos_marcados.add(arco)
+                log_passos.append(f"    -> Marcando arco ({no_atual} -> {vizinho})")
+                achado = percorrer_ramo_dfs_recursivo(vizinho, lista_L, arcos_marcados)
+                if achado is not None and not buscar_todos:
+                    return achado
