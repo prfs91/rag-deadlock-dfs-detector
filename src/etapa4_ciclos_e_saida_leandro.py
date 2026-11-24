@@ -28,6 +28,8 @@ def isolar_ciclo_elementar(
     """
     idx_inicio = lista_L.index(no_repetido)
     nucleo = lista_L[idx_inicio:]
+    if len(nucleo) > 1 and nucleo[-1] == no_repetido:
+        nucleo = nucleo[:-1]
     ancora = min(nucleo, key=lambda n: ordem_nos.get(n, 9999))
     idx_ancora = nucleo.index(ancora)
     return nucleo[idx_ancora:] + nucleo[:idx_ancora] + [ancora]
