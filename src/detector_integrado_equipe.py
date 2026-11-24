@@ -165,3 +165,47 @@ def executar_analise_completa_caso(
         "figuras": figuras,
     }
     # [FIM DA FUNÇÃO ORQUESTRADORA - Autora: Pamella Roberta Ferreira da Silva]
+
+# ------------------------------------------------------------------------------
+# [PASSO 4.4 | FASE 4 | branch: fase-4/integracao | commit e push: Pamella Roberta (coautor: Nauan Christo)]
+# executar_bateria_completa_cli: roda todos os casos e valida os gabaritos.
+# ------------------------------------------------------------------------------
+
+def executar_bateria_completa_cli(somente_obrigatorios: bool = False) -> List[Dict[str, Any]]:
+    """
+    [INÍCIO DA FUNÇÃO - Autores: Pamella Roberta & Nauan Christo de Aquino]
+    Executa os casos de teste oficiais pelo terminal, valida cada gabarito e gera
+    as três imagens de cada caso em output/figures/. Com somente_obrigatorios=True,
+    roda apenas os casos exigidos pelo enunciado (T1 a T3).
+    """
+    casos = [c for c in CASOS_DE_TESTE_OFICIAIS if c.obrigatorio or not somente_obrigatorios]
+    resultados_gerais = []
+    print("=" * 88)
+    print("DETECTOR DE DEADLOCK COM GRAFO DE ALOCAÇÃO DE RECURSOS (DFS) - UFPA / FAEC")
+    print("=" * 88)
+    for caso in casos:
+        marca = "obrigatório" if caso.obrigatorio else "opcional"
+        print(f"\n>>> Executando {caso.sigla} - {caso.titulo} ({marca}) | arquivo: {caso.arquivo}")
+        res = executar_analise_completa_caso(
+            sigla=caso.sigla,
+            titulo=caso.titulo,
+            nome_arquivo_txt=caso.arquivo,
+            buscar_todos=caso.buscar_todos,
+            exibir_rastreamento_dfs=False,
+            exibir_no_notebook=False
+        )
+        validacao = validar_gabarito_caso(caso.sigla, res["veredito"], caso.esperado)
+        print(f"Status de Validação: {validacao['status']}")
+        res["validacao"] = validacao
+        resultados_gerais.append(res)
+    aprovados = sum(1 for r in resultados_gerais if r["validacao"]["status"].startswith("APROVADO"))
+    print("\n" + "=" * 88)
+    print(f"{aprovados} de {len(resultados_gerais)} casos aprovados. "
+          f"Figuras PNG exportadas em 'output/figures/'.")
+    print("=" * 88)
+    return resultados_gerais
+    # [FIM DA FUNÇÃO - Autores: Pamella Roberta & Nauan Christo de Aquino]
+
+# ==============================================================================
+# FIM DO ARQUIVO INTEGRADOR DA EQUIPE
+# ==============================================================================
