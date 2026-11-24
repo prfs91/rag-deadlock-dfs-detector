@@ -109,3 +109,59 @@ def gerar_figuras_do_caso(
         ),
     }
     # [FIM DA FUNÇÃO INTEGRADA - Pamella Roberta & Raony Olivio Dias Capela]
+
+# ------------------------------------------------------------------------------
+# [PASSO 4.3 | FASE 4 | branch: fase-4/integracao | commit e push: Pamella Roberta]
+# executar_analise_completa_caso: pipeline completo de um caso de teste.
+# ------------------------------------------------------------------------------
+
+def executar_analise_completa_caso(
+    sigla: str,
+    titulo: str,
+    nome_arquivo_txt: str,
+    buscar_todos: bool = False,
+    exibir_rastreamento_dfs: bool = True,
+    exibir_no_notebook: bool = True
+) -> Dict[str, Any]:
+    """
+    [INÍCIO DA FUNÇÃO ORQUESTRADORA - Autora: Pamella Roberta Ferreira da Silva]
+    Executa o pipeline completo de ponta a ponta para um caso de teste:
+      - Etapa 2 (Cinara): leitura e validação do arquivo .txt em tests/;
+      - Etapa 3 (Nicolas) e Etapa 4 (Leandro): detecção DFS e formatação do ciclo;
+      - Etapa 5 (Raony) e Etapa 1 (Pamella): geometria, estilização e gravação dos
+        três PNGs do caso em output/figures/;
+      - Exibe o rastreamento, o veredito e as figuras no Jupyter Notebook.
+    """
+    caminho_txt = os.path.join(PASTA_TESTES, nome_arquivo_txt)
+    proc, rec, adj, arestas = carregar_e_validar_grafo(caminho_txt)
+    ciclos, logs = detectar_impasses_dfs(proc, rec, adj, buscar_todos=buscar_todos)
+    veredito = formatar_resultado(ciclos)
+
+    if exibir_rastreamento_dfs:
+        for linha_log in logs:
+            print(linha_log)
+        print()
+
+    figuras = gerar_figuras_do_caso(sigla, titulo, proc, rec, arestas, ciclos, veredito)
+
+    print(f"Resultado Oficial: {veredito}")
+    print("[Imagens salvas em:]")
+    for caminho in figuras.values():
+        print(f"  - {os.path.relpath(caminho, DIRETORIO_RAIZ)}")
+
+    if exibir_no_notebook and POSSUI_IPYTHON:
+        for caminho in figuras.values():
+            display(Image(filename=caminho))
+
+    return {
+        "sigla": sigla,
+        "titulo": titulo,
+        "processos": proc,
+        "recursos": rec,
+        "arestas": arestas,
+        "ciclos": ciclos,
+        "logs": logs,
+        "veredito": veredito,
+        "figuras": figuras,
+    }
+    # [FIM DA FUNÇÃO ORQUESTRADORA - Autora: Pamella Roberta Ferreira da Silva]
