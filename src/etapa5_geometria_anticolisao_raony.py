@@ -208,3 +208,63 @@ def _construcao_gulosa(nos, arestas, raiz):
                 melhor = (c, op)
         cel[n] = melhor[1]
     return cel
+
+
+
+def _trocar(cel, no, alvo):
+    antigo = cel[no]
+    dono = next((m for m, p in cel.items() if p == alvo), None)
+    cel[no] = alvo
+    if dono:
+        cel[dono] = antigo
+    return antigo, dono
+
+def _desfazer(cel, no, alvo, antigo, dono):
+    cel[no] = antigo
+    if dono:
+        cel[dono] = alvo
+
+def _recozimento_simulado(cel, arestas, semente=1, iteracoes=None, t_ini=30.0, t_fim=0.05):
+    nos = sorted(cel)
+    rng = random.Random(semente)
+    iteracoes = iteracoes or 200 * len(nos)
+    c_atual, _ = _custo_disposicao(cel, arestas)
+    melhor = (c_atual, dict(cel))
+    for it in range(iteracoes):
+        temp = t_ini * (t_fim / t_ini) ** (it / iteracoes)
+        no = rng.choice(nos)
+        x, y = cel[no]
+        alvo = (x + rng.randint(-2, 2), y + rng.randint(-2, 2))
+        if alvo == (x, y):
+            continue
+        antigo, dono = _trocar(cel, no, alvo)
+        c_novo, _ = _custo_disposicao(cel, arestas)
+        if c_novo <= c_atual or rng.random() < math.exp((c_atual - c_novo) / temp):
+            c_atual = c_novo
+            if c_novo < melhor[0] - 1e-9:
+                melhor = (c_novo, dict(cel))
+        else:
+            _desfazer(cel, no, alvo, antigo, dono)
+    return melhor[1]
+
+def _descida_exaustiva(cel, arestas, max_passadas=6):
+    c_atual, _ = _custo_disposicao(cel, arestas)
+    for _ in range(max_passadas):
+        melhorou = False
+        xs = [p[0] for p in cel.values()]
+        ys = [p[1] for p in cel.values()]
+        alvos = [(x, y) for x in range(min(xs) - 1, max(xs) + 2)
+                 for y in range(min(ys) - 1, max(ys) + 2)]
+        for no in sorted(cel):
+            for alvo in alvos:
+                if alvo == cel[no]:
+                    continue
+                antigo, dono = _trocar(cel, no, alvo)
+                c_novo, _ = _custo_disposicao(cel, arestas)
+                if c_novo < c_atual - 1e-9:
+                    c_atual, melhorou = c_novo, True
+                else:
+                    _desfazer(cel, no, alvo, antigo, dono)
+        if not melhorou:
+            break
+    return cel
