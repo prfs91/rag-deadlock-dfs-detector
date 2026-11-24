@@ -52,3 +52,24 @@ def carregar_e_validar_grafo(
     
     recursos_em_posse: Dict[str, str] = {}
     adjacencia: Dict[str, List[str]] = {no: [] for no in processos + recursos}
+
+
+
+    
+    for u, v in arestas:
+        if u not in adjacencia or v not in adjacencia:
+            raise ValueError(f"Vértice não declarado na aresta ({u} -> {v}).")
+        if (u in conj_proc and v in conj_proc) or (u in conj_rec and v in conj_rec):
+            raise ValueError(
+                f"Violação de grafo bipartido em ({u} -> {v}): arestas devem alternar Processo e Recurso."
+            )
+        if u in conj_rec and v in conj_proc:
+            if u in recursos_em_posse and recursos_em_posse[u] != v:
+                raise ValueError(
+                    f"Violação de instância única: Recurso '{u}' alocado a '{recursos_em_posse[u]}' e '{v}'."
+                )
+            recursos_em_posse[u] = v
+        adjacencia[u].append(v)
+
+    return processos, recursos, adjacencia, arestas
+    # [FIM DA FUNÇÃO - Autora: Cinara Oliveira da Silva]
