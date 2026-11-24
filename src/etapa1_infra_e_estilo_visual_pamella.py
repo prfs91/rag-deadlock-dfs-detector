@@ -270,3 +270,119 @@ def salvar_grafo_deteccao_dfs(
     )
     return _salvar(fig, nome_png)
     # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+    # ------------------------------------------------------------------------------
+# [PASSO 3.P5 | FASE 3 | branch: fase-3/pamella-desenho | commit e push: Pamella Roberta]
+# Explicação dinâmica do resultado e cartão de diagnóstico do caso.
+# ------------------------------------------------------------------------------
+
+def descrever_diagnostico(
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]],
+    ciclos: List[List[str]]
+) -> List[str]:
+    """
+    [INÍCIO DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+    Monta, a partir do próprio grafo lido, a explicação do resultado em linguagem
+    corrente. Não há texto fixo por caso de teste: qualquer arquivo .txt no formato
+    da Opção 1 gera a sua própria descrição.
+    """
+    conj_p = set(processos)
+    if not ciclos:
+        bloqueados = {u for u, v in arestas if u in conj_p and any(v == a for a, _ in arestas)}
+        return [
+            "Nenhum nó se repetiu na lista L: toda busca terminou em beco sem saída e retrocedeu.",
+            "Como não há espera circular, a fila de espera sempre chega a um processo que nada pede,",
+            "e esse processo libera o que possui, destravando quem vem atrás."
+            if bloqueados else
+            "Como não há espera circular, nenhum processo fica bloqueado indefinidamente.",
+        ]
+
+    linhas: List[str] = []
+    presos: Set[str] = set()
+    for i, ciclo in enumerate(ciclos, 1):
+        nos = ciclo[:-1] if len(ciclo) > 1 and ciclo[0] == ciclo[-1] else list(ciclo)
+        p_ciclo = [n for n in nos if n in conj_p]
+        r_ciclo = [n for n in nos if n not in conj_p]
+        presos.update(p_ciclo)
+        rotulo = f"Ciclo {i}: " if len(ciclos) > 1 else ""
+        linhas.append(
+            f"{rotulo}{len(p_ciclo)} processo(s) ({', '.join(p_ciclo)}) e "
+            f"{len(r_ciclo)} recurso(s) ({', '.join(r_ciclo)}) presos em espera circular."
+        )
+    linhas.append(
+        "Cada processo do ciclo mantém um recurso e pede outro que já está tomado, "
+        "então nenhum deles avança."
+    )
+    livres = [p for p in processos if p not in presos]
+    if livres:
+        linhas.append(
+            f"Fora do impasse: {len(livres)} processo(s) ({', '.join(livres)}) seguem livres."
+        )
+    else:
+        linhas.append("Todos os processos declarados estão presos no impasse.")
+    linhas.append(
+        "Para resolver, basta quebrar o ciclo: encerrar ou preemptar um dos processos presos "
+        "libera o recurso que ele mantém."
+    )
+    return linhas
+    # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+def salvar_cartao_diagnostico(
+    titulo: str,
+    processos: List[str],
+    recursos: List[str],
+    arestas: List[Tuple[str, str]],
+    ciclos: List[List[str]],
+    texto_veredito: str,
+    nome_png: str
+) -> str:
+    """
+    [INÍCIO DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+    Exporta o cartão-relatório do caso: contagem e nomes dos processos e recursos,
+    arcos de posse (R -> P) e de solicitação (P -> R), o veredito da Etapa 4 e a
+    explicação devolvida por descrever_diagnostico(). Todo o conteúdo é derivado do
+    arquivo lido, então o cartão se ajusta sozinho a qualquer caso de teste.
+    """
+    conj_p = set(processos)
+    posse = [f"{u}->{v}" for u, v in arestas if u not in conj_p]
+    solicitacao = [f"{u}->{v}" for u, v in arestas if u in conj_p]
+
+    def dobrar(rotulo: str, itens: List[str]) -> List[str]:
+        corpo = ", ".join(itens) if itens else "(nenhum)"
+        return textwrap.wrap(f"{rotulo} — {len(itens)}: {corpo}", width=104,
+                             subsequent_indent=" " * (len(rotulo) + 3)) or [f"{rotulo} — 0: (nenhum)"]
+
+    linhas = [f"RELATÓRIO DE DETECÇÃO DE IMPASSE (DFS) — CASO: [ {titulo} ]"]
+    corpo: List[str] = []
+    corpo += dobrar("Processos (círculos)", list(processos))
+    corpo += dobrar("Recursos (quadrados)", list(recursos))
+    corpo += dobrar("Arcos de posse (recurso -> processo)", posse)
+    corpo += dobrar("Arcos de solicitação (processo -> recurso)", solicitacao)
+    corpo.append("")
+    for i, linha in enumerate(texto_veredito.split("\n")):
+        corpo.append(f"Diagnóstico: {linha}" if i == 0 else f"             {linha.strip()}")
+    for explicacao in descrever_diagnostico(processos, recursos, arestas, ciclos):
+        corpo += textwrap.wrap(explicacao, width=104, initial_indent="  ", subsequent_indent="  ")
+
+    largura_texto = max(len(l) for l in linhas + corpo)
+    linhas.append("-" * largura_texto)
+    linhas += corpo
+
+    fig, ax = plt.subplots(figsize=(max(9.0, 0.105 * largura_texto),
+                                    max(2.4, 0.30 * len(linhas) + 0.8)))
+    ax.set_axis_off()
+    ax.text(
+        0.015, 0.5, "\n".join(linhas), family="monospace", fontsize=9.8,
+        verticalalignment="center", linespacing=1.55, fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.65",
+                  facecolor="#fdf2e9" if ciclos else "#eafaf1",
+                  edgecolor=COR_NO_DEADLOCK if ciclos else COR_NO_SEGURO, lw=2.2)
+    )
+    return _salvar(fig, nome_png)
+    # [FIM DA FUNÇÃO - Autora: Pamella Roberta Ferreira da Silva]
+
+# ==============================================================================
+# FIM DO MÓDULO DE PAMELLA ROBERTA FERREIRA DA SILVA
+# ==============================================================================
