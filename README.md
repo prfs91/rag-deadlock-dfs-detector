@@ -208,4 +208,14 @@ A resolução de todas as imagens vem de uma única constante, `DPI_FIGURAS`, no
 * O detector trata o caso pedido no trabalho, **um recurso de cada tipo**. Com várias instâncias por tipo, um ciclo não garante impasse, e seria preciso o algoritmo com matrizes de alocação e requisição.
 * Com `buscar_todos=False` (padrão), a busca para no primeiro ciclo; para listar todos, use `--todos`.
 * A disposição das imagens é uma heurística: dá zero colisões em todos os casos de `tests/`, mas não há garantia de desenho ótimo para qualquer grafo grande.
+
+---
+
+## 8. Uso de Ferramentas de Inteligência Artificial
+
+Como o prazo era curto, a equipe usou o **Gemini Notebook** (antigo NotebookLM), o **ChatGPT** e o **Claude** como apoio durante o trabalho. Essas ferramentas ajudaram na escrita e na revisão do código, mas as ideias de ajuste e as decisões foram da equipe. Entre elas estão como dividir o problema em etapas, quais validações fazer na entrada, quais casos de teste criar e o que melhorar em cada versão. O algoritmo implementado é o da Aula 07 (lista *L*, arcos marcados e retrocesso), e cada integrante é responsável pela etapa que desenvolveu e sabe explicá-la.
+
+A IA também ajudou a equipe a aprender a trabalhar no GitHub: criar *branches*, fazer *commits* ligados às *issues*, abrir e revisar *Pull Requests* e fazer o *merge*. Os conhecimentos da equipe eram bem diferentes: alguns integrantes tinham uma noção básica da plataforma e outros nunca a tinham usado. Pamella, que tinha mais experiência com o GitHub, organizou as *issues* de cada etapa e de cada passo com o trecho de código correspondente ao *commit*. Assim, cada integrante sabia o que inserir na plataforma e em que ordem. Ela também explicou o passo a passo para cada um e acompanhou as primeiras entregas. Ao longo do processo, os integrantes passaram a fazer os próprios *commits* e *Pull Requests*, e a equipe foi propondo juntos os ajustes e as melhorias.
+
+Todo conteúdo produzido com apoio de IA foi revisado pela equipe antes de entrar no repositório ou no relatório. Os resultados apresentados vêm da execução real do programa, com os 7 casos de teste aprovados (seção 6).
  
