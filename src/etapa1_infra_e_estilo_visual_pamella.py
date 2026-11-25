@@ -64,7 +64,7 @@ COR_ARESTA_SEGURA = "#7f8c8d"     # Cinza tracejado: arco fora do ciclo após va
 # RESOLUÇÃO DE EXPORTAÇÃO — altere aqui para mudar TODAS as imagens de uma vez
 # ==============================================================================
 
-DPI_FIGURAS = 200                 # resolução (pontos por polegada) do cartão e dos dois grafos
+DPI_FIGURAS = 300                 # resolução (pontos por polegada) do cartão e dos dois grafos
 
 # Medidas dos nós, em unidades do próprio gráfico
 RAIO_CIRCULO_PROCESSO = 0.36      # raio do círculo que representa um processo
